@@ -15,7 +15,6 @@ function App() {
           <AnsArea>
             <p>Hi, my name is Suresh. Ask your question</p>
           </AnsArea>
-
           <Input>
             <InputField placeholder="Ask Your Question" />
             <AiOutlineSend
@@ -90,6 +89,7 @@ const InputField = styled.input`
   border: 1px solid lightpink;
   padding-left: 15px;
   font-size: 15px;
+  padding-right: 50px;
 `;
 const ChatBox = styled.div`
   transform-origin: bottom;
