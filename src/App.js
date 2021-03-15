@@ -5,18 +5,34 @@ import { AiOutlineSend } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 function App() {
   const [openModal, setOpenModal] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [input, setInput] = useState("");
   return (
     <MainDiv>
       {openModal ? (
-        <ChatBox>
+        <ChatBox className={closing ? "closing" : ""}>
           <Header>
-            <IoClose size="2rem" onClick={() => setOpenModal(false)} />
+            <IoClose
+              size="2rem"
+              onClick={() => {
+                setClosing(true);
+                setTimeout(() => {
+                  setOpenModal(false);
+                }, 1000);
+              }}
+            />
           </Header>
           <AnsArea>
             <p>Hi, my name is Suresh. Ask your question</p>
           </AnsArea>
           <Input>
-            <InputField placeholder="Ask Your Question" />
+            <InputField
+              placeholder="Ask Your Question"
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+              }}
+            />
             <AiOutlineSend
               size="1.5rem"
               style={{
@@ -24,6 +40,9 @@ function App() {
                 right: 10,
                 top: 14,
                 cursor: "pointer",
+              }}
+              onClick={() => {
+                setInput("");
               }}
             />
           </Input>
@@ -33,6 +52,7 @@ function App() {
       )}
       <ChatBot
         onClick={() => {
+          setClosing(false);
           setOpenModal(true);
         }}
       >
@@ -66,7 +86,7 @@ const Header = styled.div`
 const openingAnimation = keyframes`
 from{
   opacity:0;
-  transform:scale(1,0)
+  transform:scale(0,0)
 }
 to{
   opacity:1;
@@ -92,14 +112,14 @@ const InputField = styled.input`
   padding-right: 50px;
 `;
 const ChatBox = styled.div`
-  transform-origin: bottom;
+  transform-origin: right bottom;
   width: 300px;
   height: 450px;
   position: fixed;
   background-color: #fff;
   right: 9%;
   bottom: 19%;
-  animation: ${openingAnimation} 1s forwards;
+  animation: ${openingAnimation} 1s backwards;
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
   border-radius: 10px;
 `;
