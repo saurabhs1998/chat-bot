@@ -7,8 +7,8 @@
 }
 
 .closing {
-  transform-origin: bottom !important;
-  animation: closinAnimation 1.2s backwards !important;
+  transform-origin: bottom right !important;
+  animation: closinAnimation 0.8s backwards !important;
 }
 @keyframes closinAnimation {
   0% {

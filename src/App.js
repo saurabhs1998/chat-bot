@@ -18,7 +18,7 @@ function App() {
                 setClosing(true);
                 setTimeout(() => {
                   setOpenModal(false);
-                }, 1000);
+                }, 800);
               }}
             />
           </Header>
@@ -119,7 +119,7 @@ const ChatBox = styled.div`
   background-color: #fff;
   right: 9%;
   bottom: 19%;
-  animation: ${openingAnimation} 1s backwards;
+  animation: ${openingAnimation} 0.6s backwards;
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
   border-radius: 10px;
 `;
