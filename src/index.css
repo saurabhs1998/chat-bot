@@ -5,7 +5,9 @@
   box-sizing: border-box;
   font-family: "Karla", sans-serif;
 }
-
+::-webkit-scrollbar {
+  display: none;
+}
 .closing {
   transform-origin: bottom right !important;
   animation: closinAnimation 0.8s backwards !important;
@@ -19,4 +21,10 @@
     opacity: 0;
     transform: scale(0, 0);
   }
+}
+.showans {
+  height: 400px !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  cursor: auto;
 }
