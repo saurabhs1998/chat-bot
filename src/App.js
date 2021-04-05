@@ -7,6 +7,8 @@ import { css } from "@emotion/core";
 import HashLoader from "react-spinners/HashLoader";
 import app from "./firebase";
 import Fuse from "fuse.js";
+import swal from "sweetalert";
+
 // import { addData } from "./addData";
 
 function App() {
@@ -23,6 +25,7 @@ function App() {
   const [submitUnknownQuestions, setSubmitUnknownQuestions] = useState(false);
   const [email, setEmail] = useState("");
   const [notFoundQuestion, setNotFoundQuestion] = useState("");
+  const [error, setError] = useState("");
   const ref = app.firestore().collection("Questions");
   const common_ques = app.firestore().collection("commonly-asked");
   const notFoundQuestionRef = app.firestore().collection("Not-Found-Questions");
@@ -38,6 +41,10 @@ function App() {
     });
     // eslint-disable-next-line
   }, []);
+  function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
 
   const findAnswer = (e) => {
     e.preventDefault();
@@ -55,13 +62,24 @@ function App() {
   };
   const submitNotFoundQuestion = (e) => {
     e.preventDefault();
+    if (email === "") {
+      setError("Email cannot be empty");
+      return;
+    }
+    if (notFoundQuestion === "") {
+      setError("Question cannot be empty");
+      return;
+    }
+    if (!validateEmail(email)) {
+      setError("Invalid Email");
+      return;
+    }
+    setLoading(true);
     notFoundQuestionRef
       .doc(email)
       .get()
       .then((doc) => {
         if (doc.exists) {
-          console.log("yessss");
-          console.log(doc.data().question);
           notFoundQuestionRef
             .doc(email)
             .set({
@@ -69,17 +87,34 @@ function App() {
               question: [...doc.data().question, notFoundQuestion],
             })
             .then(() => {
-              console.log("done");
+              swal(
+                "Your question has been submitted",
+                "Wait while we respond.",
+                "success"
+              );
+              setLoading(false);
+              setEmail("");
+              setNotFoundQuestion("");
+              setSubmitUnknownQuestions(false);
+              setInput("");
             });
         } else {
           notFoundQuestionRef
             .doc(email)
             .set({ email: email, question: [notFoundQuestion] })
             .then(() => {
-              console.log("done one");
+              swal(
+                "Your question has been submitted",
+                "Wait while we respond.",
+                "success"
+              );
+              setLoading(false);
+              setEmail("");
+              setNotFoundQuestion("");
+              setSubmitUnknownQuestions(false);
+              setInput("");
             });
         }
-        console.log(doc);
       });
   };
   useLayoutEffect(() => {
@@ -131,7 +166,9 @@ function App() {
               />
             </LoadingArea>
           ) : (
-            <AnsArea>
+            <AnsArea
+              className={`${submitUnknownQuestions ? "hide-overflow" : ""}`}
+            >
               {!asked
                 ? commonQues.map((item, pos) => {
                     return (
@@ -212,34 +249,62 @@ function App() {
                 ""
               )}
               {submitUnknownQuestions ? (
-                <SubmitQuestion>
-                  <IoClose
-                    className="cross"
-                    size="2rem"
-                    onClick={() => {
-                      setSubmitUnknownQuestions(false);
-                    }}
-                  />
-                  <TextAreaForQuestion
-                    placeholder="Enter Your Question"
-                    onChange={(e) => {
-                      setNotFoundQuestion(e.target.value);
-                    }}
-                  />
-                  <EmailInputField
-                    placeholder="Enter Your Email"
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                    }}
-                  />
-                  <SubmitButton
-                    onClick={(e) => {
-                      submitNotFoundQuestion(e);
-                    }}
-                  >
-                    Submit
-                  </SubmitButton>
-                </SubmitQuestion>
+                !loading ? (
+                  <SubmitQuestion>
+                    <IoClose
+                      className="cross"
+                      size="2rem"
+                      onClick={() => {
+                        setSubmitUnknownQuestions(false);
+                      }}
+                    />
+                    <TextAreaForQuestion
+                      value={notFoundQuestion}
+                      placeholder="Enter Your Question"
+                      onChange={(e) => {
+                        setNotFoundQuestion(e.target.value);
+                      }}
+                    />
+                    {error === "Question cannot be empty" ? (
+                      <Error>* Question cannot be empty</Error>
+                    ) : (
+                      ""
+                    )}
+                    <EmailInputField
+                      value={email}
+                      placeholder="Enter Your Email"
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                      }}
+                    />
+                    {error === "Email cannot be empty" ? (
+                      <Error>* Email cannot be empty</Error>
+                    ) : (
+                      ""
+                    )}
+                    {error === "Invalid Email" ? (
+                      <Error>* Invalid Email</Error>
+                    ) : (
+                      ""
+                    )}
+                    <SubmitButton
+                      onClick={(e) => {
+                        submitNotFoundQuestion(e);
+                      }}
+                    >
+                      Submit
+                    </SubmitButton>
+                  </SubmitQuestion>
+                ) : (
+                  <LoadingArea>
+                    <HashLoader
+                      color={"#ffc0cb"}
+                      loading={true}
+                      css={override}
+                      size={100}
+                    />
+                  </LoadingArea>
+                )
               ) : (
                 ""
               )}
@@ -330,6 +395,11 @@ const SubmitButton = styled.button`
     background-color: #fff;
     color: pink;
   }
+`;
+
+const Error = styled.span`
+  color: red;
+  margin-bottom: 0.5rem;
 `;
 const SubmitQuestion = styled.div`
   position: absolute;

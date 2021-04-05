@@ -32,3 +32,6 @@
 .singleQNA {
   margin-bottom: 1rem;
 }
+.hide-overflow {
+  overflow-y: hidden !important;
+}
