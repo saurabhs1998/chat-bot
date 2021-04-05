@@ -59,14 +59,28 @@ function App() {
       .doc(email)
       .get()
       .then((doc) => {
+        if (doc.exists) {
+          console.log("yessss");
+          console.log(doc.data().question);
+          notFoundQuestionRef
+            .doc(email)
+            .set({
+              email: email,
+              question: [...doc.data().question, notFoundQuestion],
+            })
+            .then(() => {
+              console.log("done");
+            });
+        } else {
+          notFoundQuestionRef
+            .doc(email)
+            .set({ email: email, question: [notFoundQuestion] })
+            .then(() => {
+              console.log("done one");
+            });
+        }
         console.log(doc);
       });
-    // notFoundQuestionRef
-    //   .doc(email)
-    //   .set({ email: email, question: notFoundQuestion })
-    //   .then(() => {
-    //     console.log("done");
-    //   });
   };
   useLayoutEffect(() => {
     if (input.length === 0) {
