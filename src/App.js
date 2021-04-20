@@ -8,6 +8,7 @@ import HashLoader from "react-spinners/HashLoader";
 import app from "./firebase";
 import Fuse from "fuse.js";
 import swal from "sweetalert";
+import bot from "./bot.png";
 
 // import { addData } from "./addData";
 
@@ -134,6 +135,7 @@ function App() {
   }, [allQuestions]);
   return (
     <MainDiv>
+      <img src={bot} alt="chatbot"></img>
       {openModal ? (
         <ChatBox className={closing ? "closing" : ""}>
           <Header>
@@ -229,9 +231,9 @@ function App() {
                         }}
                         className={` ${position === pos ? "showans" : ""}`}
                       >
-                        <p className="singleQNA">{`Q: ${item.Q}`}</p>
+                        <p className="singleQNA">{`Q: ${item.item.Q}`}</p>
                         {checkAns && position === pos ? (
-                          <p>{`A: ${item.A}`}</p>
+                          <p>{`A: ${item.item.A}`}</p>
                         ) : (
                           ""
                         )}
@@ -643,6 +645,9 @@ const ChatBot = styled.div`
 const MainDiv = styled.div`
   width: 100%;
   height: 100vh;
-  background-color: #caf7e3;
+  background-color: white;
+  display: felx;
+  align-item: center;
+  justify-content: center;
 `;
 export default App;
